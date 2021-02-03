@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 public class XMLFileReader implements PropertyLoader, ConsolePrinter {
     private BufferedReader reader = null;
     private boolean expression = false;
-    private String tag, rowID;
+    private String tag;
+    private int rowID;
     private boolean endOfFile = false;
     private boolean canTakeCodeElements = false;
     private String tagElement = "Tags=\"&lt;";
@@ -18,7 +19,7 @@ public class XMLFileReader implements PropertyLoader, ConsolePrinter {
     private String parentIDElement = "ParentId=\"";
     private String[] tags;
     private String line = "";
-    private HashSet<String> ids = new HashSet<>();
+    private HashSet<Integer> ids = new HashSet<>();
     private ArrayList<String> codeElemets = new ArrayList<>();
 
     public boolean startReading(){
@@ -54,34 +55,33 @@ public class XMLFileReader implements PropertyLoader, ConsolePrinter {
 
     private void checkForRow(){
         canTakeCodeElements = false;
-        String row  = getOccurence(rowIdElement +"(.*?) />", line);
 
-        if(!hasOccurence(row))
+        if(line.indexOf(rowIdElement) < 0)
             return;
 
-        line = null;
-        tag = getOccurence(tagElement +"(.*?)\"", row);
+        tag = getOccurence(tagElement +"(.*?)\"", line);
+        boolean hasTag = hasOccurence(tag);
 
-        if(hasOccurence(tag) && searchedTag(tag))
-            getRowID(row);
-        else if(!hasOccurence(tag)){
-            String parentID = getOccurence(parentIDElement +"(.*?)\"", row);
-            if(parentID == null)
+        if(hasTag && searchedTag(tag))
+            getRowID(line);
+        else if(!hasTag){
+            String parID = getOccurence(parentIDElement +"(.*?)\"", line);
+            if(parID == null)
                 return;
-            parentID = parentID.replaceAll("\\D+","");
+            int parentID = Integer.valueOf(parID.replaceAll("\\D+",""));
 
             if(ids.contains(parentID))
-                getRowID(row);
+              getRowID(line);
             else
                 return;
         }
 
         if(canTakeCodeElements)
-            getCodeElements(row);
+           getCodeElements(line);
     }
 
     private void getRowID(String row){
-        rowID = getOccurence(rowIdElement +"(.*?)\"", row).replaceAll("\\D+","");
+        rowID = Integer.valueOf(getOccurence(rowIdElement +"(.*?)\"", row).replaceAll("\\D+",""));
         ids.add(rowID);
         canTakeCodeElements = true;
     }
@@ -135,6 +135,7 @@ public class XMLFileReader implements PropertyLoader, ConsolePrinter {
         if(line == null && !expression){
             endOfFile = true;
             stopReading();
+            ids = null;
             return false;
         }
         return true;
@@ -153,6 +154,6 @@ public class XMLFileReader implements PropertyLoader, ConsolePrinter {
     }
 
     public int getRowID() {
-        return Integer.parseInt(rowID.replaceAll("\\D+",""));
+        return rowID;
     }
 }

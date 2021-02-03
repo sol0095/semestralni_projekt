@@ -20,15 +20,13 @@ public class DataPreparator {
             line = line.replaceAll("&amp", "&");
 
         line = line.replaceAll("&lt;","<").replaceAll("&gt;",">");
-        line = line.replaceAll("&lt","<").replaceAll("&gt",">");
-        line = line.replaceAll("\n", " ").replaceAll("\r", " ").toUpperCase();
+        line = line.replaceAll("&lt","<").replaceAll("&gt",">")
+                .replaceAll("\n", " ").replaceAll("\r", " ").toUpperCase();
         return line;
     }
 
     public Boolean containsSelect(String str){
-        if((str.contains("select ") || str.contains("select*"))
-                && (str.contains(" from ") || str.contains("*from "))
-                && str.indexOf("select") < str.indexOf("from")){
+        if(str.indexOf("select") != -1 && str.indexOf("from") != -1) {
             return true;
         }
         return false;
