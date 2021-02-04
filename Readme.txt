@@ -17,6 +17,7 @@ Pro správné fungování je nutné všechny uvedené konfigurace nastavit.
 Výstupem vznikne XML soubor, ve kterém budou derivační stromy dotazů, na které bylo úspěšně aplikované zvolené pravidlo.
 Pozor na lomítka v absolutních cestách. Pokud se zadá absolutní cesta s opačným lomítkem, vyvolá se výjimka.
 U některých gramatik je k fungování potřeba více souborů - nestačí pouze lexer a parser. Například u PL/SQL gramatiky jsou navíc 2 java soubory (PlSqlLexerBase.java, PlSqlParserBase.java). Kvůli takové situaci je zavedena konfigurace "grammar.inputDirectory", kde stačí zadat pouze cestu k souborům gramatik. 
+Některé gramatiky mají řešené i výpis výjimek, např. u SQLite se může vypsat "Incorrect grammar name or rule name or expression is incorrect!" výjimka. Program však pracuje stále správně a může se nechat dojet do konce.
 
 ##############################################################
 ##############################################################
